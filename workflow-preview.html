@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Travel Planning Assistant - Workflow Preview</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .diagram-container {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .mermaid {
+            text-align: center;
+        }
+        .feature-box {
+            background: #ecf0f1;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        .workflow-step {
+            background: #e8f5e8;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 3px;
+            border-left: 3px solid #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌍 Smart Travel Planning Assistant</h1>
+        <h2>Interactive Workflow Diagrams</h2>
+        <p>Visual representation of the complete system architecture and data flow</p>
+    </div>
+
+    <div class="diagram-container">
+        <h3>🏗️ System Architecture Overview</h3>
+        <div class="mermaid">
+            flowchart TB
+    subgraph "User Interface"
+        UI["Web Interface<br/>index.html + app.js"]
+        UI --> |User Input| FORM["Trip Planning Form"]
+        UI --> |User Input| COMPARE["Destination Comparison Form"]
+    end
+
+    subgraph "Main Application Server"
+        EXPRESS["Express.js Server<br/>index.ts"]
+        EXPRESS --> |API Calls| API1[/api/plan-trip/]
+        EXPRESS --> |API Calls| API2[/api/compare-destinations/]
+        EXPRESS --> |API Calls| API3[/api/get-weather/]
+        EXPRESS --> |API Calls| API4[/api/convert-currency/]
+        EXPRESS --> |API Calls| API5[/api/translate/]
+    end
+
+    subgraph "MCP Server Cluster"
+        ORCH["Travel Orchestrator<br/>travel-orchestrator.ts"]
+        WEATHER["Weather Server<br/>weather-server.ts"]
+        CURRENCY["Currency Server<br/>currency-server.ts"]
+        TRANS["Translation Server<br/>translation-server.ts"]
+    end
+
+    subgraph "External APIs"
+        OW["OpenWeatherMap API"]
+        EX["Exchange Rate APIs"]
+        GT["Google Translate API"]
+    end
+
+    subgraph "Data Processing"
+        MOCK["Mock Data Engine"]
+        CALC["Calculation Engine"]
+        SCORE["Scoring Algorithm"]
+    end
+
+    UI --> EXPRESS
+    API1 --> ORCH
+    API2 --> ORCH
+    API3 --> WEATHER
+    API4 --> CURRENCY
+    API5 --> TRANS
+    
+    ORCH --> WEATHER
+    ORCH --> CURRENCY
+    ORCH --> TRANS
+    ORCH --> MOCK
+    ORCH --> CALC
+    
+    WEATHER --> OW
+    CURRENCY --> EX
+    TRANS --> GT
+    
+    CALC --> SCORE
+    MOCK --> RESULT["Travel Recommendations"]
+    SCORE --> RESULT
+
+        </div>
+    </div>
+
+    <div class="diagram-container">
+        <h3>✈️ Trip Planning Workflow</h3>
+        <div class="workflow-step">1. User enters trip details in the web interface</div>
+        <div class="workflow-step">2. Frontend sends POST request to /api/plan-trip</div>
+        <div class="workflow-step">3. Express server calls the Travel Orchestrator</div>
+        <div class="workflow-step">4. Orchestrator makes parallel calls to all MCP servers</div>
+        <div class="workflow-step">5. Data is aggregated and processed</div>
+        <div class="workflow-step">6. Results are formatted and sent back to frontend</div>
+        <div class="workflow-step">7. User sees comprehensive travel recommendations</div>
+        
+        <div class="mermaid">
+            sequenceDiagram
+                participant User
+                participant UI
+                participant Express
+                participant Orchestrator
+                participant Weather
+                participant Currency
+                participant Translation
+                
+                User->>UI: Enter trip details
+                UI->>Express: POST /api/plan-trip
+                Express->>Orchestrator: plan_trip()
+                
+                Orchestrator->>Weather: get_travel_weather()
+                Weather-->>Orchestrator: Weather data
+                
+                Orchestrator->>Currency: get_destination_currency()
+                Currency-->>Orchestrator: Currency info
+                
+                Orchestrator->>Currency: convert_currency()
+                Currency-->>Orchestrator: Budget conversion
+                
+                Orchestrator->>Translation: get_travel_phrases()
+                Translation-->>Orchestrator: Essential phrases
+                
+                Orchestrator->>Orchestrator: Calculate total cost
+                Orchestrator->>Orchestrator: Generate recommendations
+                
+                Orchestrator-->>Express: Complete travel plan
+                Express-->>UI: JSON response
+                UI-->>User: Display results
+        </div>
+    </div>
+
+    <div class="diagram-container">
+        <h3>🔄 MCP Server Communication Flow</h3>
+        <div class="mermaid">
+            graph TD
+                subgraph "MCP Client (Main App)"
+                    CLIENT[MCP Client<br/>Express Server]
+                    CLIENT --> |1. Initialize| INIT[Initialize MCP Connection]
+                    CLIENT --> |2. List Tools| LIST[List Available Tools]
+                    CLIENT --> |3. Call Tool| CALL[Execute Tool Call]
+                    CLIENT --> |4. Process| PROC[Process Response]
+                end
+                
+                subgraph "MCP Server Network"
+                    INIT --> ORCH_SRV[Travel Orchestrator Server]
+                    LIST --> ORCH_SRV
+                    CALL --> ORCH_SRV
+                    
+                    ORCH_SRV --> |Delegate| WEATHER_SRV[Weather Server]
+                    ORCH_SRV --> |Delegate| CURRENCY_SRV[Currency Server]
+                    ORCH_SRV --> |Delegate| TRANS_SRV[Translation Server]
+                    
+                    WEATHER_SRV --> |Response| ORCH_SRV
+                    CURRENCY_SRV --> |Response| ORCH_SRV
+                    TRANS_SRV --> |Response| ORCH_SRV
+                    
+                    ORCH_SRV --> |Aggregate| PROC
+                end
+        </div>
+    </div>
+
+    <div class="diagram-container">
+        <h3>⚡ Data Processing Pipeline</h3>
+        <div class="mermaid">
+            graph TD
+                A[User Request] --> B[Input Validation]
+                B --> C[Route Handler]
+                C --> D[MCP Tool Selection]
+                D --> E[Parallel Server Calls]
+                E --> F[Weather Data]
+                E --> G[Currency Data]
+                E --> H[Translation Data]
+                F --> I[Data Aggregation]
+                G --> I
+                H --> I
+                I --> J[Business Logic Processing]
+                J --> K[Scoring Algorithm]
+                K --> L[Response Formatting]
+                L --> M[JSON Response]
+                M --> N[Frontend Rendering]
+        </div>
+    </div>
+
+    <div class="diagram-container">
+        <h3>🏭 Server Initialization Flow</h3>
+        <div class="mermaid">
+            graph LR
+                A[Start Application] --> B[Load Environment Variables]
+                B --> C[Initialize Express Server]
+                C --> D[Setup Static File Serving]
+                D --> E[Define API Routes]
+                E --> F[Start MCP Servers]
+                F --> G[Weather Server Ready]
+                F --> H[Currency Server Ready]
+                F --> I[Translation Server Ready]
+                F --> J[Orchestrator Server Ready]
+                G --> K[All Systems Operational]
+                H --> K
+                I --> K
+                J --> K
+        </div>
+    </div>
+
+    <div class="diagram-container">
+        <h3>🚀 Key Features & Benefits</h3>
+        <div class="feature-box">
+            <strong>🔄 Asynchronous Processing:</strong> All MCP servers run in parallel for optimal performance
+        </div>
+        <div class="feature-box">
+            <strong>🛡️ Error Resilience:</strong> Graceful degradation with fallback mechanisms
+        </div>
+        <div class="feature-box">
+            <strong>⚡ Real-time Processing:</strong> Live data integration from multiple sources
+        </div>
+        <div class="feature-box">
+            <strong>🎯 Intelligent Recommendations:</strong> Weighted scoring algorithms for personalized results
+        </div>
+        <div class="feature-box">
+            <strong>📊 Comprehensive Analysis:</strong> Weather, cost, safety, and activity comparisons
+        </div>
+    </div>
+
+    <div class="diagram-container">
+        <h3>📋 How to Use This Preview</h3>
+        <p><strong>To view the interactive diagrams:</strong></p>
+        <ol>
+            <li>Save this HTML file to your computer</li>
+            <li>Open it in any modern web browser (Chrome, Firefox, Safari, Edge)</li>
+            <li>The Mermaid diagrams will render automatically</li>
+            <li>You can zoom, pan, and interact with the diagrams</li>
+        </ol>
+        <p><strong>Alternative:</strong> You can also copy the Mermaid code from the <code>workflow-diagram.md</code> file and paste it into <a href="https://mermaid.live" target="_blank">Mermaid Live Editor</a> for an interactive experience.</p>
+    </div>
+
+    <script>
+        // Initialize Mermaid with custom configuration
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            },
+            sequence: {
+                useMaxWidth: true
+            }
+        });
+
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers to feature boxes
+            const featureBoxes = document.querySelectorAll('.feature-box');
+            featureBoxes.forEach(box => {
+                box.addEventListener('click', function() {
+                    this.style.backgroundColor = '#d5e8d4';
+                    setTimeout(() => {
+                        this.style.backgroundColor = '#ecf0f1';
+                    }, 200);
+                });
+            });
+
+            // Add hover effects to workflow steps
+            const workflowSteps = document.querySelectorAll('.workflow-step');
+            workflowSteps.forEach(step => {
+                step.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(5px)';
+                });
+                step.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

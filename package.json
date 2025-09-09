@@ -1,0 +1,33 @@
+{
+  "name": "smart-travel-assistant",
+  "version": "1.0.0",
+  "description": "Smart travel planning assistant using MCP servers",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node src/index.js",
+    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "start": "node build/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "axios": "^1.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.0",
+    "express": "^4.18.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^20.19.13",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "travel",
+    "mcp",
+    "assistant",
+    "planning"
+  ],
+  "author": "Travel Assistant Team",
+  "license": "MIT"
+}
